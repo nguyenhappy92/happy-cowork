@@ -1,0 +1,28 @@
+{
+  "$schema": "https://cursor.sh/schemas/mcp-servers.json",
+  "note": "Template MCP server config. Copy relevant entries into ~/.cursor/mcp.json. Replace <…> placeholders and load secrets from your shell env, not git.",
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "linear": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-linear"],
+      "env": {
+        "LINEAR_API_KEY": "${LINEAR_API_KEY}"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "${HOME}/code"
+      ]
+    }
+  }
+}

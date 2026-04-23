@@ -1,0 +1,25 @@
+{
+  "$schema": "https://cursor.sh/schemas/hooks.json",
+  "version": 1,
+  "hooks": {
+    "agentStop": [
+      {
+        "name": "desktop-notify-on-stop",
+        "description": "Show a macOS notification when the agent finishes a turn.",
+        "command": "bash ~/.cursor/hooks/scripts/on-agent-stop.sh",
+        "enabled": true
+      }
+    ],
+    "beforeToolUse": [
+      {
+        "name": "guard-destructive-git",
+        "description": "Warn before destructive git commands (force push to main, hard reset).",
+        "command": "bash ~/.cursor/hooks/scripts/guard-destructive-git.sh",
+        "match": {
+          "tool": "Shell"
+        },
+        "enabled": true
+      }
+    ]
+  }
+}
