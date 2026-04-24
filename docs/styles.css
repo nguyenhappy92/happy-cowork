@@ -317,6 +317,9 @@ h1 {
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
+.footer-grid:has(> :only-child) {
+  grid-template-columns: 1fr;
+}
 .footer-logo {
   margin: 0 0 0.3rem;
   font-weight: 600;
