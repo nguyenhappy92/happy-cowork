@@ -2,6 +2,8 @@
 
 My personal hub of Cursor skills, rules, hooks, and helper scripts that I "cowork" with every day. This repo is the single place I put reusable prompts, agent personas, and automation so any machine I touch can pick them up with one command.
 
+Live site: <https://ai.happynguyen.name.vn/>
+
 ## What's inside
 
 | Folder | Purpose |
@@ -13,7 +15,7 @@ My personal hub of Cursor skills, rules, hooks, and helper scripts that I "cowor
 | `mcp/` | MCP server configs (Datadog, Linear, GitLens, …). |
 | `scripts/` | Plain shell helpers I invoke from the terminal. |
 | `templates/` | Boilerplate: PR bodies, RFCs, issue templates. |
-| `docs/` | Longer-form docs, recipes, and onboarding notes. |
+| `docs/` | Longer-form docs, recipes, onboarding notes, and the GitHub Pages landing page (`index.html`). |
 
 ## Quick start
 
@@ -61,6 +63,7 @@ description: One-liner that starts with "Use when …" so the agent knows when t
 
 ## Roadmap
 
+- [x] Landing page on GitHub Pages (`docs/index.html` → <https://ai.happynguyen.name.vn/>).
 - [ ] CI lint for `SKILL.md` frontmatter.
 - [ ] `justfile` shortcuts (`just new-skill foo`).
 - [ ] Canvas dashboards for recurring analyses.
