@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Install · Happy Cowork</title>
+  <meta
+    name="description"
+    content="How to install Happy Cowork — clone the repo, run ./install.sh, and have your Cursor skills, rules, and hooks symlinked into ~/.cursor in under a minute."
+  />
+  <meta name="author" content="nguyenhappy92" />
+  <meta name="theme-color" content="#0b0d12" />
+  <link rel="canonical" href="https://ai.happynguyen.name.vn/install/" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Install · Happy Cowork" />
+  <meta
+    property="og:description"
+    content="Clone once, symlink into ~/.cursor, done. A minute-by-minute install guide for Happy Cowork."
+  />
+  <meta property="og:url" content="https://ai.happynguyen.name.vn/install/" />
+  <meta property="og:image" content="https://ai.happynguyen.name.vn/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Install · Happy Cowork" />
+  <meta
+    name="twitter:description"
+    content="Clone once, symlink into ~/.cursor, done."
+  />
+
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body class="page-install">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="hero hero-compact">
+    <nav class="nav" aria-label="Primary">
+      <a class="logo" href="../" aria-label="Happy Cowork home">
+        <span aria-hidden="true">~/.cursor</span><span class="logo-accent" aria-hidden="true">/happy-cowork</span>
+        <span class="visually-hidden">Happy Cowork</span>
+      </a>
+      <div class="nav-links">
+        <a href="../#skills">Skills</a>
+        <a href="../#principles">Principles</a>
+        <a href="./" aria-current="page">Install</a>
+        <a
+          class="btn btn-ghost"
+          href="https://github.com/nguyenhappy92/happy-cowork"
+          target="_blank"
+          rel="noopener"
+        >GitHub →</a>
+      </div>
+    </nav>
+
+    <div id="top" class="hero-content">
+      <p class="eyebrow">Install · est. 60 seconds</p>
+      <h1>Clone, symlink, cowork.</h1>
+      <p class="lede">
+        Happy Cowork installs as plain symlinks into <code>~/.cursor/</code>.
+        No build step, no package manager, no background service. Re-runs of
+        <code>install.sh</code> are idempotent and safe.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#quick-install">Jump to install</a>
+        <a class="btn btn-secondary" href="#what-happens">What it does</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="prereqs" class="section">
+      <h2>Prerequisites</h2>
+      <p class="section-lede">A typical developer machine already has these.</p>
+      <div class="grid grid-3">
+        <article class="card">
+          <h3>macOS or Linux</h3>
+          <p>Windows works via WSL 2 (Ubuntu/Debian).</p>
+        </article>
+        <article class="card">
+          <h3>bash 4+</h3>
+          <p>The installer uses <code>set -euo pipefail</code> and arrays. On macOS you can use the default <code>/bin/bash</code> 3.2 too — the script is compatible.</p>
+        </article>
+        <article class="card">
+          <h3>git 2.30+</h3>
+          <p>For cloning and pulling updates.</p>
+        </article>
+        <article class="card">
+          <h3>Cursor</h3>
+          <p>Any recent version. Launching Cursor at least once creates <code>~/.cursor/</code>.</p>
+        </article>
+        <article class="card">
+          <h3><code>gh</code> CLI <span class="chip">optional</span></h3>
+          <p>Used by <code>create-pr</code>, <code>review-pr</code>, <code>triage-issues</code>, <code>release-notes</code>. Run <code>gh auth login</code> once.</p>
+        </article>
+        <article class="card">
+          <h3><code>jq</code> &amp; <code>direnv</code> <span class="chip">optional</span></h3>
+          <p>JSON wrangling in scripts and per-repo env vars — nice to have, not required.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="quick-install" class="section">
+      <div class="section-head">
+        <h2>Quick install</h2>
+        <p class="section-lede">Three commands. One minute.</p>
+      </div>
+
+      <ol class="install-steps">
+        <li>
+          <div class="install-step-head">
+            <span class="step-num">1</span>
+            <h3>Clone the repo</h3>
+          </div>
+          <div class="copy-block">
+            <pre><code id="cmd-clone">git clone https://github.com/nguyenhappy92/happy-cowork.git ~/code/happy-cowork</code></pre>
+            <button class="btn-copy" type="button" data-copy-for="cmd-clone" aria-label="Copy clone command">Copy</button>
+          </div>
+          <p class="hint">
+            Prefer SSH? Use
+            <code>git@github.com:nguyenhappy92/happy-cowork.git</code> instead.
+            You can also clone anywhere — <code>~/code/happy-cowork</code> is a
+            convention, not a requirement.
+          </p>
+        </li>
+
+        <li>
+          <div class="install-step-head">
+            <span class="step-num">2</span>
+            <h3>Run the installer</h3>
+          </div>
+          <div class="copy-block">
+            <pre><code id="cmd-install">cd ~/code/happy-cowork &amp;&amp; ./install.sh</code></pre>
+            <button class="btn-copy" type="button" data-copy-for="cmd-install" aria-label="Copy install command">Copy</button>
+          </div>
+          <p class="hint">
+            Idempotent — safe to re-run. Existing files at the target paths are
+            backed up with a <code>.bak</code> suffix.
+          </p>
+        </li>
+
+        <li>
+          <div class="install-step-head">
+            <span class="step-num">3</span>
+            <h3>Restart Cursor, then verify</h3>
+          </div>
+          <p>Open Cursor and ask the agent:</p>
+          <pre class="terminal" aria-label="Verification prompt"><span class="prompt">›</span> List the skills you have available.</pre>
+          <p class="hint">
+            You should see <code>create-pr</code>, <code>rebase</code>,
+            <code>review-pr</code>, <code>daily-standup</code>,
+            <code>triage-issues</code>, and <code>release-notes</code>.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="what-happens" class="section">
+      <h2>What the installer does</h2>
+      <p class="section-lede">No magic. Just symlinks.</p>
+
+      <div class="mapping">
+        <div class="mapping-row">
+          <code class="mapping-src">skills/*</code>
+          <span class="mapping-arrow" aria-hidden="true">→</span>
+          <code class="mapping-dest">~/.cursor/skills/</code>
+        </div>
+        <div class="mapping-row">
+          <code class="mapping-src">rules/*</code>
+          <span class="mapping-arrow" aria-hidden="true">→</span>
+          <code class="mapping-dest">~/.cursor/rules/</code>
+        </div>
+        <div class="mapping-row">
+          <code class="mapping-src">hooks/hooks.json</code>
+          <span class="mapping-arrow" aria-hidden="true">→</span>
+          <code class="mapping-dest">~/.cursor/hooks/hooks.json</code>
+        </div>
+        <div class="mapping-row">
+          <code class="mapping-src">hooks/scripts</code>
+          <span class="mapping-arrow" aria-hidden="true">→</span>
+          <code class="mapping-dest">~/.cursor/hooks/scripts</code>
+        </div>
+      </div>
+
+      <ul class="notes">
+        <li>Because everything is a symlink, editing a file in the repo is instantly picked up by Cursor — no reinstall.</li>
+        <li>Existing symlinks at the target are replaced. Existing regular files/dirs are moved to <code>&lt;path&gt;.bak</code> before linking.</li>
+        <li>Scripts under <code>hooks/scripts/</code> are chmod&#8209;ed executable by the installer.</li>
+        <li>You can override the Cursor home with <code>CURSOR_HOME=/custom/path ./install.sh</code>.</li>
+      </ul>
+    </section>
+
+    <section id="platforms" class="section">
+      <h2>Platform notes</h2>
+      <div class="grid grid-3">
+        <article class="card">
+          <h3>macOS</h3>
+          <p>Works with the bundled <code>/bin/bash</code>. If you use Homebrew bash (<code>/opt/homebrew/bin/bash</code>), that's fine too.</p>
+        </article>
+        <article class="card">
+          <h3>Linux</h3>
+          <p>Any distro with <code>bash</code> 4+ and <code>git</code>. Tested on Ubuntu LTS and Debian stable.</p>
+        </article>
+        <article class="card">
+          <h3>Windows (WSL 2)</h3>
+          <p>Install into your WSL home, not <code>/mnt/c/…</code>. Symlinks don't survive the DrvFs boundary reliably.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="update" class="section">
+      <h2>Updating</h2>
+      <p>Since everything is symlinked, updating is just a <code>git pull</code>:</p>
+      <div class="copy-block">
+        <pre><code id="cmd-update">cd ~/code/happy-cowork &amp;&amp; git pull --rebase</code></pre>
+        <button class="btn-copy" type="button" data-copy-for="cmd-update" aria-label="Copy update command">Copy</button>
+      </div>
+      <p class="hint">
+        New skills or rules appear automatically because <code>~/.cursor/skills/</code>
+        and <code>~/.cursor/rules/</code> point at the repo's folders.
+        Restart Cursor if you added or changed <code>hooks/hooks.json</code>.
+      </p>
+    </section>
+
+    <section id="uninstall" class="section">
+      <h2>Uninstall</h2>
+      <p>
+        Remove the symlinks the installer created. Nothing else is touched —
+        any <code>.bak</code> files stay where they are.
+      </p>
+      <div class="copy-block">
+        <pre><code id="cmd-uninstall">cd ~/code/happy-cowork &amp;&amp; \
+find ~/.cursor/skills ~/.cursor/rules ~/.cursor/hooks -maxdepth 2 -type l \
+  -lname "$(pwd)/*" -print -delete</code></pre>
+        <button class="btn-copy" type="button" data-copy-for="cmd-uninstall" aria-label="Copy uninstall command">Copy</button>
+      </div>
+    </section>
+
+    <section id="troubleshooting" class="section">
+      <h2>Troubleshooting</h2>
+      <dl class="faq">
+        <dt>Cursor doesn't see the skills.</dt>
+        <dd>Restart Cursor fully (quit, not just close the window). Confirm the symlinks exist: <code>ls -la ~/.cursor/skills</code>.</dd>
+
+        <dt><code>~/.cursor/</code> doesn't exist.</dt>
+        <dd>Launch Cursor once to create it, then re-run <code>./install.sh</code>.</dd>
+
+        <dt>The installer says "<em>Backing up existing … -&gt; ….bak</em>".</dt>
+        <dd>Expected. You had a regular file or directory at the target path; it's safe on disk next to the new symlink.</dd>
+
+        <dt>Permission denied on <code>install.sh</code>.</dt>
+        <dd>Run <code>chmod +x install.sh</code> once, then re-try.</dd>
+
+        <dt>I use zsh / fish — does that matter?</dt>
+        <dd>No. The script runs under <code>bash</code> regardless of your interactive shell.</dd>
+
+        <dt>Can I install into a custom Cursor home?</dt>
+        <dd>Yes: <code>CURSOR_HOME=/some/path ./install.sh</code>.</dd>
+      </dl>
+    </section>
+
+    <section id="next" class="section">
+      <h2>What next</h2>
+      <div class="grid grid-3">
+        <article class="card">
+          <h3>Try a skill</h3>
+          <p>In any chat, say <code>/standup</code> or <code>/triage</code>. The agent picks the matching skill by its description.</p>
+        </article>
+        <article class="card">
+          <h3>Read the recipes</h3>
+          <p>Combine skills into daily workflows — see <a href="../workflow-recipes.md">workflow recipes</a>.</p>
+        </article>
+        <article class="card">
+          <h3>Add your own</h3>
+          <p>Say <em>"use the create-skill skill to add a new skill called my-thing"</em> — or create <code>skills/my-thing/SKILL.md</code> by hand.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <p class="footer-logo">happy-cowork</p>
+        <p class="muted">
+          MIT licensed · built by
+          <a href="https://github.com/nguyenhappy92" target="_blank" rel="noopener">@nguyenhappy92</a>
+        </p>
+      </div>
+      <div>
+        <p class="muted">
+          <a href="../">← Back to landing</a>
+        </p>
+        <p class="muted">
+          <a href="https://github.com/nguyenhappy92/happy-cowork" target="_blank" rel="noopener">GitHub repo</a>
+          ·
+          <a href="https://github.com/nguyenhappy92/happy-cowork/blob/main/install.sh" target="_blank" rel="noopener">install.sh</a>
+        </p>
+      </div>
+    </div>
+    <p class="muted center">ai.happynguyen.name.vn/install</p>
+  </footer>
+
+  <script>
+    (function () {
+      var buttons = document.querySelectorAll(".btn-copy");
+      buttons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var id = btn.getAttribute("data-copy-for");
+          var el = document.getElementById(id);
+          if (!el) return;
+          var text = el.innerText;
+          var done = function () {
+            var orig = btn.textContent;
+            btn.textContent = "Copied!";
+            btn.classList.add("is-copied");
+            setTimeout(function () {
+              btn.textContent = orig;
+              btn.classList.remove("is-copied");
+            }, 1400);
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(function () {
+              fallback(text, done);
+            });
+          } else {
+            fallback(text, done);
+          }
+        });
+      });
+      function fallback(text, done) {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "absolute";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    })();
+  </script>
+</body>
+</html>
