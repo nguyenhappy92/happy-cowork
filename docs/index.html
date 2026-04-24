@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy Cowork — Cursor skills, rules &amp; hooks</title>
+  <meta
+    name="description"
+    content="My personal hub of Cursor skills, rules, hooks, and helper scripts — symlinked into ~/.cursor so any machine I touch inherits my workflow."
+  />
+  <meta name="author" content="nguyenhappy92" />
+  <meta name="theme-color" content="#0b0d12" />
+  <link rel="canonical" href="https://ai.happynguyen.name.vn/" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Happy Cowork" />
+  <meta
+    property="og:description"
+    content="Cursor skills, rules, hooks, and helper scripts I cowork with every day."
+  />
+  <meta property="og:url" content="https://ai.happynguyen.name.vn/" />
+  <meta property="og:image" content="https://ai.happynguyen.name.vn/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Happy Cowork" />
+  <meta
+    name="twitter:description"
+    content="Cursor skills, rules, hooks, and helper scripts I cowork with every day."
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="hero">
+    <nav class="nav" aria-label="Primary">
+      <a class="logo" href="#top" aria-label="Happy Cowork home">
+        <span aria-hidden="true">~/.cursor</span><span class="logo-accent" aria-hidden="true">/happy-cowork</span>
+        <span class="visually-hidden">Happy Cowork</span>
+      </a>
+      <div class="nav-links">
+        <a href="#skills">Skills</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#principles">Principles</a>
+        <a
+          class="btn btn-ghost"
+          href="https://github.com/nguyenhappy92/happy-cowork"
+          target="_blank"
+          rel="noopener"
+        >GitHub →</a>
+      </div>
+    </nav>
+
+    <div id="top" class="hero-content">
+      <p class="eyebrow">Personal Cursor automation hub</p>
+      <h1>Cowork with your AI, on every&nbsp;machine.</h1>
+      <p class="lede">
+        A single repo of <strong>skills</strong>, <strong>rules</strong>, <strong>hooks</strong>,
+        and <strong>helper scripts</strong> for
+        <a href="https://cursor.com" target="_blank" rel="noopener">Cursor</a>.
+        Clone once, run <code>./install.sh</code>, and every Cursor session on
+        your machine inherits the same muscle memory.
+      </p>
+      <div class="cta">
+        <a
+          class="btn btn-primary"
+          href="https://github.com/nguyenhappy92/happy-cowork"
+          target="_blank"
+          rel="noopener"
+        >View on GitHub</a>
+        <a class="btn btn-secondary" href="#how-it-works">Quick start</a>
+      </div>
+      <pre class="terminal" aria-label="Install command"><span class="prompt">$</span> git clone git@github.com:nguyenhappy92/happy-cowork.git ~/code/happy-cowork
+<span class="prompt">$</span> cd ~/code/happy-cowork &amp;&amp; ./install.sh</pre>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="what" class="section">
+      <h2>What's inside</h2>
+      <p class="section-lede">Eight folders, one job each.</p>
+      <div class="grid grid-4">
+        <article class="card">
+          <h3>skills/</h3>
+          <p>One folder per Cursor skill, each with a <code>SKILL.md</code> the agent auto-discovers.</p>
+        </article>
+        <article class="card">
+          <h3>rules/</h3>
+          <p>Persistent coding conventions, commit style, per-language guidance.</p>
+        </article>
+        <article class="card">
+          <h3>hooks/</h3>
+          <p>Event-driven automation — desktop notifications, guardrails on destructive git.</p>
+        </article>
+        <article class="card">
+          <h3>agents/</h3>
+          <p>Prompt and persona definitions for specialized subagents (reviewer, planner, explorer).</p>
+        </article>
+        <article class="card">
+          <h3>mcp/</h3>
+          <p>Template MCP server configs for GitHub, Linear, filesystem and more.</p>
+        </article>
+        <article class="card">
+          <h3>scripts/</h3>
+          <p>Plain shell helpers invoked from the terminal: new branches, branch cleanup.</p>
+        </article>
+        <article class="card">
+          <h3>templates/</h3>
+          <p>Boilerplate for PR bodies, RFCs, issue templates.</p>
+        </article>
+        <article class="card">
+          <h3>docs/</h3>
+          <p>Onboarding notes, workflow recipes, and — yes — this site.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="skills" class="section">
+      <h2>Current skills</h2>
+      <p class="section-lede">Triggered by natural language in any Cursor chat.</p>
+      <div class="grid grid-3">
+        <article class="skill">
+          <h3>create-pr</h3>
+          <p class="trigger">Use when: "create a PR", "/create-pr"</p>
+          <p>Opens a GitHub PR with a well-structured summary via <code>gh</code>.</p>
+        </article>
+        <article class="skill">
+          <h3>rebase</h3>
+          <p class="trigger">Use when: "rebase onto dev", "/rebase"</p>
+          <p>Rebases the current branch cleanly and reports conflicts.</p>
+        </article>
+        <article class="skill">
+          <h3>review-pr</h3>
+          <p class="trigger">Use when: "review this PR", "/review-pr"</p>
+          <p>Reviews a GitHub PR for correctness, security, and conventions.</p>
+        </article>
+        <article class="skill">
+          <h3>daily-standup</h3>
+          <p class="trigger">Use when: "standup", "/standup"</p>
+          <p>Turns recent git activity into a yesterday / today / blockers summary.</p>
+        </article>
+        <article class="skill">
+          <h3>triage-issues</h3>
+          <p class="trigger">Use when: "triage issues", "/triage"</p>
+          <p>Groups open GitHub / Linear issues by priority and staleness.</p>
+        </article>
+        <article class="skill">
+          <h3>release-notes</h3>
+          <p class="trigger">Use when: "draft release notes", "/release-notes"</p>
+          <p>Generates changelogs from a git range into Features / Fixes / Chores.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="section">
+      <h2>How it works</h2>
+      <ol class="steps">
+        <li>
+          <h3>1. Clone</h3>
+          <pre><code>git clone git@github.com:nguyenhappy92/happy-cowork.git ~/code/happy-cowork</code></pre>
+        </li>
+        <li>
+          <h3>2. Install (symlinks, no copying)</h3>
+          <pre><code>cd ~/code/happy-cowork &amp;&amp; ./install.sh</code></pre>
+          <p>
+            <code>skills/</code>, <code>rules/</code>, and <code>hooks/</code> are
+            symlinked into <code>~/.cursor/</code>. Edits in the repo take effect
+            immediately — no reinstall needed.
+          </p>
+        </li>
+        <li>
+          <h3>3. Use</h3>
+          <p>
+            Open Cursor and type a trigger phrase like
+            <code>/create-pr</code> or <code>"draft release notes for v1.2"</code>.
+            The agent picks the matching skill by its <code>description</code>
+            frontmatter.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="principles" class="section">
+      <h2>Design principles</h2>
+      <ol class="principles">
+        <li><strong>Symlink, don't copy.</strong> Edits in the repo take effect immediately in <code>~/.cursor/</code>.</li>
+        <li><strong>One folder per skill.</strong> Keeps diffs and discovery clean.</li>
+        <li><strong>Descriptions matter.</strong> The agent selects skills by their <code>description</code> frontmatter — write it like a trigger phrase.</li>
+        <li><strong>No secrets in git.</strong> Use <code>.env.example</code> + direnv / 1Password CLI for anything sensitive.</li>
+        <li><strong>Promote twice-repeated prompts into skills.</strong> If I type the same instructions twice, it belongs here.</li>
+      </ol>
+    </section>
+
+    <section id="roadmap" class="section">
+      <h2>Roadmap</h2>
+      <ul class="roadmap">
+        <li>CI lint for <code>SKILL.md</code> frontmatter.</li>
+        <li><code>justfile</code> shortcuts (<code>just new-skill foo</code>).</li>
+        <li>Canvas dashboards for recurring analyses.</li>
+        <li>Shared MCP config for team members.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <p class="footer-logo">happy-cowork</p>
+        <p class="muted">
+          MIT licensed · built by
+          <a href="https://github.com/nguyenhappy92" target="_blank" rel="noopener">@nguyenhappy92</a>
+        </p>
+      </div>
+      <div>
+        <p class="muted">
+          <a href="https://github.com/nguyenhappy92/happy-cowork" target="_blank" rel="noopener">GitHub repo</a>
+        </p>
+        <p class="muted">
+          <a href="getting-started.md">Getting started</a>
+          ·
+          <a href="workflow-recipes.md">Workflow recipes</a>
+        </p>
+      </div>
+    </div>
+    <p class="muted center">ai.happynguyen.name.vn</p>
+  </footer>
+</body>
+</html>
