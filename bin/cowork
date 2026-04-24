@@ -1,0 +1,229 @@
+#!/usr/bin/env bash
+# cowork — the happy-cowork CLI.
+#
+#   cowork install [--tool=<name>[,<name>...]] [--only=<category>[,<category>...]] [--dry-run]
+#   cowork uninstall [--tool=<name>[,<name>...]]
+#   cowork list tools | skills | rules
+#   cowork doctor [--tool=<name>]
+#   cowork --help
+#
+# Adapters live in adapters/<name>/adapter.sh. Each defines functions under the
+# namespace adapter_<name>::* (install, uninstall, detect, doctor).
+
+set -euo pipefail
+
+COWORK_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export COWORK_ROOT
+
+# shellcheck source=bin/lib/log.sh
+source "$COWORK_ROOT/bin/lib/log.sh"
+# shellcheck source=bin/lib/link.sh
+source "$COWORK_ROOT/bin/lib/link.sh"
+# shellcheck source=bin/lib/frontmatter.sh
+source "$COWORK_ROOT/bin/lib/frontmatter.sh"
+
+COWORK_VERSION="0.2.0"
+
+cowork::usage() {
+  cat <<'__COWORK_USAGE__'
+cowork — your happy-cowork CLI.
+
+USAGE
+  cowork install   [--tool=<t>[,<t>...]] [--only=<c>[,<c>...]] [--dry-run]
+  cowork uninstall [--tool=<t>[,<t>...]]
+  cowork list      tools | skills | rules | mcp
+  cowork doctor    [--tool=<t>]
+  cowork version
+  cowork help
+
+OPTIONS
+  --tool=<t>       Comma list. Default: every adapter whose target exists.
+  --only=<c>       Categories: skills,rules,hooks,mcp,agents. Default: all.
+  --dry-run        Print what would happen; change nothing.
+
+ENV
+  CURSOR_HOME      Override Cursor home (default ~/.cursor).
+  CLAUDE_HOME      Override Claude Code home (default ~/.claude).
+__COWORK_USAGE__
+}
+
+cowork::list_adapters() {
+  local dir
+  for dir in "$COWORK_ROOT"/adapters/*/; do
+    [[ -f "$dir/adapter.sh" ]] || continue
+    basename "${dir%/}"
+  done
+}
+
+cowork::load_adapter() {
+  local name="$1"
+  local path="$COWORK_ROOT/adapters/$name/adapter.sh"
+  [[ -f "$path" ]] || cowork::die "no adapter for tool: $name"
+  # shellcheck disable=SC1090
+  source "$path"
+}
+
+cowork::detected_tools() {
+  local t
+  for t in $(cowork::list_adapters); do
+    cowork::load_adapter "$t"
+    if declare -f "adapter_${t}::detect" >/dev/null \
+      && "adapter_${t}::detect" >/dev/null 2>&1; then
+      echo "$t"
+    fi
+  done
+}
+
+cowork::resolve_tools() {
+  local requested="$1"
+  if [[ -z "$requested" ]]; then
+    cowork::detected_tools
+    return
+  fi
+  tr ',' '\n' <<<"$requested"
+}
+
+cmd_install() {
+  local tools="" categories="all" dry_run=0
+  while (( $# )); do
+    case "$1" in
+      --tool=*)     tools="${1#--tool=}" ;;
+      --only=*)     categories="${1#--only=}" ;;
+      --dry-run)    dry_run=1 ;;
+      -h|--help)    cowork::usage; return 0 ;;
+      *)            cowork::die "unknown install flag: $1" ;;
+    esac
+    shift
+  done
+
+  local selected
+  selected="$(cowork::resolve_tools "$tools")"
+  [[ -z "$selected" ]] && cowork::die "no target tools detected. Use --tool=<name>."
+
+  cowork::log "cowork v$COWORK_VERSION"
+  cowork::log "root = $COWORK_ROOT"
+  cowork::log "tools = $(tr '\n' ' ' <<<"$selected")"
+  cowork::log "categories = $categories"
+  [[ $dry_run -eq 1 ]] && cowork::warn "DRY RUN — no changes will be made"
+
+  local t
+  while IFS= read -r t; do
+    [[ -z "$t" ]] && continue
+    cowork::load_adapter "$t"
+    if [[ $dry_run -eq 1 ]]; then
+      cowork::info "would invoke adapter_${t}::install \"$categories\""
+      continue
+    fi
+    "adapter_${t}::install" "$categories"
+  done <<<"$selected"
+
+  cowork::log "done."
+}
+
+cmd_uninstall() {
+  local tools=""
+  while (( $# )); do
+    case "$1" in
+      --tool=*)   tools="${1#--tool=}" ;;
+      -h|--help)  cowork::usage; return 0 ;;
+      *)          cowork::die "unknown uninstall flag: $1" ;;
+    esac
+    shift
+  done
+  local selected
+  selected="$(cowork::resolve_tools "$tools")"
+  [[ -z "$selected" ]] && cowork::die "no tools selected"
+
+  local t
+  while IFS= read -r t; do
+    [[ -z "$t" ]] && continue
+    cowork::load_adapter "$t"
+    "adapter_${t}::uninstall"
+  done <<<"$selected"
+}
+
+cmd_list() {
+  local what="${1:-}"
+  case "$what" in
+    tools)
+      printf 'Available adapters:\n'
+      local t
+      for t in $(cowork::list_adapters); do
+        cowork::load_adapter "$t"
+        local mark="  "
+        "adapter_${t}::detect" >/dev/null 2>&1 && mark="✓ "
+        local target
+        target="$("adapter_${t}::target" 2>/dev/null || echo "?")"
+        printf '  %s%-10s  -> %s\n' "$mark" "$t" "$target"
+      done
+      ;;
+    skills)
+      local s
+      for s in "$COWORK_ROOT"/core/skills/*/SKILL.md; do
+        [[ -f "$s" ]] || continue
+        local name desc tools
+        name="$(cowork::frontmatter_field "$s" name)"
+        desc="$(cowork::frontmatter_field "$s" description)"
+        tools="$(cowork::frontmatter_list  "$s" tools | tr '\n' ',' | sed 's/,$//')"
+        printf '  %-16s  %s\n' "${name:-$(basename "$(dirname "$s")")}" "${desc:-(no description)}"
+        [[ -n "$tools" ]] && printf '  %-16s  tools: %s\n' "" "$tools"
+      done
+      ;;
+    rules)
+      local r
+      for r in "$COWORK_ROOT"/core/rules/*.md; do
+        [[ -f "$r" ]] || continue
+        printf '  %s\n' "$(basename "$r")"
+      done
+      ;;
+    mcp)
+      [[ -f "$COWORK_ROOT/core/mcp/servers.json" ]] \
+        && cat "$COWORK_ROOT/core/mcp/servers.json" \
+        || echo "(no MCP config)"
+      ;;
+    ""|-h|--help)
+      cowork::usage
+      ;;
+    *)
+      cowork::die "unknown list target: $what"
+      ;;
+  esac
+}
+
+cmd_doctor() {
+  local tools=""
+  while (( $# )); do
+    case "$1" in
+      --tool=*)  tools="${1#--tool=}" ;;
+      -h|--help) cowork::usage; return 0 ;;
+      *)         cowork::die "unknown doctor flag: $1" ;;
+    esac
+    shift
+  done
+  local selected
+  selected="$(cowork::resolve_tools "$tools")"
+  [[ -z "$selected" ]] && { echo "no tools detected"; return 0; }
+
+  local t
+  while IFS= read -r t; do
+    [[ -z "$t" ]] && continue
+    cowork::load_adapter "$t"
+    "adapter_${t}::doctor"
+  done <<<"$selected"
+}
+
+main() {
+  local sub="${1:-help}"
+  shift || true
+  case "$sub" in
+    install)   cmd_install "$@" ;;
+    uninstall) cmd_uninstall "$@" ;;
+    list)      cmd_list "$@" ;;
+    doctor)    cmd_doctor "$@" ;;
+    version|-v|--version) echo "cowork $COWORK_VERSION" ;;
+    help|-h|--help) cowork::usage ;;
+    *) cowork::usage; cowork::die "unknown command: $sub" ;;
+  esac
+}
+
+main "$@"

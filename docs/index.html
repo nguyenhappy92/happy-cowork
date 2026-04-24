@@ -3,15 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Happy Cowork — Cursor skills, rules &amp; hooks</title>
+  <title>Happy Cowork — skills, rules &amp; hooks for Cursor, Claude Code, and friends</title>
   <meta
     name="description"
-    content="My personal hub of Cursor skills, rules, hooks, and helper scripts — symlinked into ~/.cursor so any machine I touch inherits my workflow."
+    content="A tool-neutral hub of AI coding skills, rules, hooks, and MCP configs. One source of truth, many adapters — Cursor today, Claude Code and Aider tomorrow."
   />
   <meta name="author" content="nguyenhappy92" />
-  <meta name="theme-color" content="#0b0d12" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#0b0d12" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafbfc" />
   <link rel="canonical" href="https://ai.happynguyen.name.vn/" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("cowork-theme");
+        var prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+        var theme = stored || (prefersLight ? "light" : "dark");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
 
   <!-- Open Graph / Twitter -->
   <meta property="og:type" content="website" />
@@ -45,6 +59,21 @@
         <a href="#how-it-works">How it works</a>
         <a href="#principles">Principles</a>
         <a href="install/">Install</a>
+        <button
+          type="button"
+          class="theme-toggle"
+          data-theme-toggle
+          aria-label="Toggle color theme"
+          title="Toggle theme"
+        >
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+          </svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+        </button>
         <a
           class="btn btn-ghost"
           href="https://github.com/nguyenhappy92/happy-cowork"
@@ -55,17 +84,17 @@
     </nav>
 
     <div id="top" class="hero-content">
-      <p class="eyebrow">Personal Cursor automation hub</p>
-      <h1>Cowork with your AI, on every&nbsp;machine.</h1>
+      <p class="eyebrow">One source of truth · many AI tools</p>
+      <h1>Your AI muscle memory, everywhere.</h1>
       <p class="lede">
         A single repo of <strong>skills</strong>, <strong>rules</strong>, <strong>hooks</strong>,
-        and <strong>helper scripts</strong> for
-        <a href="https://cursor.com" target="_blank" rel="noopener">Cursor</a>.
-        Clone once, run <code>./install.sh</code>, and every Cursor session on
-        your machine inherits the same muscle memory.
+        and <strong>MCP configs</strong>, shared across
+        <a href="https://cursor.com" target="_blank" rel="noopener">Cursor</a>,
+        <a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank" rel="noopener">Claude Code</a>,
+        and friends. Tool-neutral <code>core/</code>, thin adapters — install once, use everywhere.
       </p>
       <div class="cta">
-        <a class="btn btn-primary" href="install/">Get started — install</a>
+        <a class="btn btn-primary" href="install/">Install</a>
         <a
           class="btn btn-secondary"
           href="https://github.com/nguyenhappy92/happy-cowork"
@@ -73,47 +102,73 @@
           rel="noopener"
         >View on GitHub</a>
       </div>
-      <pre class="terminal" aria-label="Install command"><span class="prompt">$</span> git clone git@github.com:nguyenhappy92/happy-cowork.git ~/code/happy-cowork
-<span class="prompt">$</span> cd ~/code/happy-cowork &amp;&amp; ./install.sh</pre>
+
+      <div class="copy-block copy-hero">
+        <pre><code id="cmd-oneline">curl -fsSL https://ai.happynguyen.name.vn/install.sh | bash</code></pre>
+        <button class="btn-copy" type="button" data-copy-for="cmd-oneline" aria-label="Copy one-line install command">Copy</button>
+      </div>
+      <p class="hint hint-center">
+        Want to read it first? <a href="install/#verify">Inspect then run</a> ·
+        <a href="install/#manual">Manual clone</a>
+      </p>
     </div>
   </header>
 
   <main id="main">
     <section id="what" class="section">
-      <h2>What's inside</h2>
-      <p class="section-lede">Eight folders, one job each.</p>
+      <h2>Architecture</h2>
+      <p class="section-lede">Source in <code>core/</code>, one adapter per tool.</p>
       <div class="grid grid-4">
         <article class="card">
-          <h3>skills/</h3>
-          <p>One folder per Cursor skill, each with a <code>SKILL.md</code> the agent auto-discovers.</p>
+          <h3>core/skills/</h3>
+          <p>One folder per skill, each with a <code>SKILL.md</code>. Shared across every compatible tool.</p>
         </article>
         <article class="card">
-          <h3>rules/</h3>
-          <p>Persistent coding conventions, commit style, per-language guidance.</p>
+          <h3>core/rules/</h3>
+          <p>Persistent conventions — coding style, commit style, per-language guidance.</p>
         </article>
         <article class="card">
-          <h3>hooks/</h3>
-          <p>Event-driven automation — desktop notifications, guardrails on destructive git.</p>
+          <h3>core/hooks/</h3>
+          <p>Event-driven automation with canonical event names; adapters translate.</p>
         </article>
         <article class="card">
-          <h3>agents/</h3>
-          <p>Prompt and persona definitions for specialized subagents (reviewer, planner, explorer).</p>
+          <h3>core/agents/</h3>
+          <p>Personas for specialized subagents (reviewer, planner, explorer).</p>
         </article>
         <article class="card">
-          <h3>mcp/</h3>
-          <p>Template MCP server configs for GitHub, Linear, filesystem and more.</p>
+          <h3>core/mcp/</h3>
+          <p>MCP server registry — rendered per tool at install time.</p>
         </article>
         <article class="card">
-          <h3>scripts/</h3>
-          <p>Plain shell helpers invoked from the terminal: new branches, branch cleanup.</p>
+          <h3>adapters/cursor/</h3>
+          <p>Projects <code>core/</code> into <code>~/.cursor/</code>. Symlink-based, idempotent.</p>
         </article>
         <article class="card">
-          <h3>templates/</h3>
-          <p>Boilerplate for PR bodies, RFCs, issue templates.</p>
+          <h3>adapters/claude/</h3>
+          <p>Projects <code>core/</code> into <code>~/.claude/</code>. <span class="chip">soon</span></p>
         </article>
         <article class="card">
-          <h3>docs/</h3>
-          <p>Onboarding notes, workflow recipes, and — yes — this site.</p>
+          <h3>bin/cowork</h3>
+          <p>The CLI. <code>install</code>, <code>uninstall</code>, <code>list</code>, <code>doctor</code>.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="tools" class="section">
+      <h2>Supported tools</h2>
+      <p class="section-lede">Your favorite AI coding environment, probably already on the list.</p>
+      <div class="grid grid-3">
+        <article class="card">
+          <h3>Cursor <span class="chip chip-ok">shipping</span></h3>
+          <p>Full support: skills, rules, hooks, MCP template. Drop-in with <code>cowork install --tool=cursor</code>.</p>
+        </article>
+        <article class="card">
+          <h3>Claude Code <span class="chip">on deck</span></h3>
+          <p>Adapter scaffolded. Will render <code>core/rules/</code> into <code>CLAUDE.md</code>, symlink skills, install hooks.</p>
+        </article>
+        <article class="card">
+          <h3>Aider · Continue · Codex <span class="chip">planned</span></h3>
+          <p>Adapter per tool. Each knows its native layout; <code>core/</code> doesn't change.</p>
         </article>
       </div>
     </section>
@@ -159,31 +214,35 @@
       <h2>How it works</h2>
       <ol class="steps">
         <li>
-          <h3>1. Clone</h3>
-          <pre><code>git clone git@github.com:nguyenhappy92/happy-cowork.git ~/code/happy-cowork</code></pre>
+          <h3>1. Curl the bootstrap</h3>
+          <pre><code>curl -fsSL https://ai.happynguyen.name.vn/install.sh | bash</code></pre>
+          <p>
+            It clones the repo into <code>~/code/happy-cowork</code> and runs
+            <code>cowork install</code>, which auto-detects the AI tools already on your machine.
+          </p>
         </li>
         <li>
-          <h3>2. Install (symlinks, no copying)</h3>
-          <pre><code>cd ~/code/happy-cowork &amp;&amp; ./install.sh</code></pre>
+          <h3>2. Adapters project <code>core/</code> into each tool</h3>
           <p>
-            <code>skills/</code>, <code>rules/</code>, and <code>hooks/</code> are
-            symlinked into <code>~/.cursor/</code>. Edits in the repo take effect
-            immediately — no reinstall needed.
+            The Cursor adapter symlinks <code>core/skills/</code>,
+            <code>core/rules/</code>, <code>core/hooks/</code> into
+            <code>~/.cursor/</code>. Other adapters (Claude, Aider, …) do the
+            same for their respective homes. One source, many targets.
           </p>
         </li>
         <li>
           <h3>3. Use</h3>
           <p>
-            Open Cursor and type a trigger phrase like
+            Open your tool and type a trigger phrase like
             <code>/create-pr</code> or <code>"draft release notes for v1.2"</code>.
             The agent picks the matching skill by its <code>description</code>
             frontmatter.
           </p>
         </li>
       </ol>
-      <p class="section-lede" style="margin-top: 1.5rem;">
-        Want the full walkthrough with prerequisites, update &amp; uninstall steps,
-        and troubleshooting? → <a href="install/">Full install guide</a>
+      <p class="hint hint-center" style="margin-top: 1.5rem;">
+        Want the full walkthrough — prerequisites, update &amp; uninstall, troubleshooting?
+        → <a href="install/">Full install guide</a>
       </p>
     </section>
 
@@ -231,5 +290,70 @@
     </div>
     <p class="muted center">ai.happynguyen.name.vn</p>
   </footer>
+
+  <script>
+    (function () {
+      var buttons = document.querySelectorAll(".btn-copy");
+      buttons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var id = btn.getAttribute("data-copy-for");
+          var el = document.getElementById(id);
+          if (!el) return;
+          var text = el.innerText;
+          var done = function () {
+            var orig = btn.textContent;
+            btn.textContent = "Copied!";
+            btn.classList.add("is-copied");
+            setTimeout(function () {
+              btn.textContent = orig;
+              btn.classList.remove("is-copied");
+            }, 1400);
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(function () {
+              fallback(text, done);
+            });
+          } else {
+            fallback(text, done);
+          }
+        });
+      });
+      function fallback(text, done) {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "absolute";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    })();
+
+    (function () {
+      var root = document.documentElement;
+      var btns = document.querySelectorAll("[data-theme-toggle]");
+      function apply(t) {
+        root.setAttribute("data-theme", t);
+        try { localStorage.setItem("cowork-theme", t); } catch (e) {}
+        btns.forEach(function (b) { b.setAttribute("aria-pressed", t === "light" ? "true" : "false"); });
+      }
+      apply(root.getAttribute("data-theme") || "dark");
+      btns.forEach(function (b) {
+        b.addEventListener("click", function () {
+          apply(root.getAttribute("data-theme") === "light" ? "dark" : "light");
+        });
+      });
+      var mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)");
+      if (mq && mq.addEventListener) {
+        mq.addEventListener("change", function (e) {
+          try {
+            if (!localStorage.getItem("cowork-theme")) apply(e.matches ? "light" : "dark");
+          } catch (err) {}
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

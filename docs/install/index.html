@@ -6,18 +6,32 @@
   <title>Install · Happy Cowork</title>
   <meta
     name="description"
-    content="How to install Happy Cowork — clone the repo, run ./install.sh, and have your Cursor skills, rules, and hooks symlinked into ~/.cursor in under a minute."
+    content="Install Happy Cowork in one line: curl -fsSL https://ai.happynguyen.name.vn/install.sh | bash. Symlinks your Cursor skills, rules, and hooks into ~/.cursor in under a minute."
   />
   <meta name="author" content="nguyenhappy92" />
-  <meta name="theme-color" content="#0b0d12" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#0b0d12" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafbfc" />
   <link rel="canonical" href="https://ai.happynguyen.name.vn/install/" />
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("cowork-theme");
+        var prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+        var theme = stored || (prefersLight ? "light" : "dark");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
 
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Install · Happy Cowork" />
   <meta
     property="og:description"
-    content="Clone once, symlink into ~/.cursor, done. A minute-by-minute install guide for Happy Cowork."
+    content="One line, sixty seconds, no package manager."
   />
   <meta property="og:url" content="https://ai.happynguyen.name.vn/install/" />
   <meta property="og:image" content="https://ai.happynguyen.name.vn/og-image.png" />
@@ -25,7 +39,7 @@
   <meta name="twitter:title" content="Install · Happy Cowork" />
   <meta
     name="twitter:description"
-    content="Clone once, symlink into ~/.cursor, done."
+    content="One line, sixty seconds, no package manager."
   />
 
   <link rel="stylesheet" href="../styles.css" />
@@ -43,6 +57,21 @@
         <a href="../#skills">Skills</a>
         <a href="../#principles">Principles</a>
         <a href="./" aria-current="page">Install</a>
+        <button
+          type="button"
+          class="theme-toggle"
+          data-theme-toggle
+          aria-label="Toggle color theme"
+          title="Toggle theme"
+        >
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+          </svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+        </button>
         <a
           class="btn btn-ghost"
           href="https://github.com/nguyenhappy92/happy-cowork"
@@ -54,16 +83,25 @@
 
     <div id="top" class="hero-content">
       <p class="eyebrow">Install · est. 60 seconds</p>
-      <h1>Clone, symlink, cowork.</h1>
+      <h1>One line to cowork.</h1>
       <p class="lede">
-        Happy Cowork installs as plain symlinks into <code>~/.cursor/</code>.
-        No build step, no package manager, no background service. Re-runs of
-        <code>install.sh</code> are idempotent and safe.
+        Happy Cowork installs as symlinks from <code>core/</code> into each
+        AI tool's native home. No build step, no package manager,
+        no background service. Re-runs are idempotent.
       </p>
-      <div class="cta">
-        <a class="btn btn-primary" href="#quick-install">Jump to install</a>
-        <a class="btn btn-secondary" href="#what-happens">What it does</a>
+
+      <div class="copy-block copy-hero">
+        <pre><code id="cmd-oneline">curl -fsSL https://ai.happynguyen.name.vn/install.sh | bash</code></pre>
+        <button class="btn-copy" type="button" data-copy-for="cmd-oneline" aria-label="Copy one-line install command">Copy</button>
       </div>
+
+      <p class="hint hint-center">
+        The installer auto-detects the AI tools already on your machine.
+        <br />
+        <a href="#tools">Pick specific tools</a> ·
+        <a href="#verify">Inspect then run</a> ·
+        <a href="#manual">Manual clone</a>
+      </p>
     </div>
   </header>
 
@@ -74,59 +112,135 @@
       <div class="grid grid-3">
         <article class="card">
           <h3>macOS or Linux</h3>
-          <p>Windows works via WSL 2 (Ubuntu/Debian).</p>
+          <p>Windows works via WSL 2 (Ubuntu / Debian). Native cmd / PowerShell is not supported.</p>
         </article>
         <article class="card">
-          <h3>bash 4+</h3>
-          <p>The installer uses <code>set -euo pipefail</code> and arrays. On macOS you can use the default <code>/bin/bash</code> 3.2 too — the script is compatible.</p>
+          <h3>bash 3.2+</h3>
+          <p>macOS's bundled <code>/bin/bash</code> is fine. Homebrew's bash 5 is also fine.</p>
         </article>
         <article class="card">
           <h3>git 2.30+</h3>
-          <p>For cloning and pulling updates.</p>
+          <p>For cloning and for the <code>git pull</code> update path.</p>
         </article>
         <article class="card">
           <h3>Cursor</h3>
-          <p>Any recent version. Launching Cursor at least once creates <code>~/.cursor/</code>.</p>
+          <p>Any recent version. Launch Cursor once so <code>~/.cursor/</code> exists before installing.</p>
         </article>
         <article class="card">
           <h3><code>gh</code> CLI <span class="chip">optional</span></h3>
-          <p>Used by <code>create-pr</code>, <code>review-pr</code>, <code>triage-issues</code>, <code>release-notes</code>. Run <code>gh auth login</code> once.</p>
+          <p>Used by <code>create-pr</code>, <code>review-pr</code>, <code>triage-issues</code>, <code>release-notes</code>. <code>gh auth login</code> once.</p>
         </article>
         <article class="card">
           <h3><code>jq</code> &amp; <code>direnv</code> <span class="chip">optional</span></h3>
-          <p>JSON wrangling in scripts and per-repo env vars — nice to have, not required.</p>
+          <p>JSON wrangling in scripts and per-repo env vars — nice to have.</p>
         </article>
       </div>
     </section>
 
-    <section id="quick-install" class="section">
-      <div class="section-head">
-        <h2>Quick install</h2>
-        <p class="section-lede">Three commands. One minute.</p>
+    <section id="tools" class="section">
+      <h2>Pick which tools to install for</h2>
+      <p class="section-lede">The bootstrap accepts a <code>--tool=</code> flag. Leave it off and every detected tool gets configured.</p>
+
+      <div class="copy-block">
+        <pre><code id="cmd-tool-cursor">curl -fsSL https://ai.happynguyen.name.vn/install.sh | bash -s -- --tool=cursor</code></pre>
+        <button class="btn-copy" type="button" data-copy-for="cmd-tool-cursor" aria-label="Copy Cursor-only install">Copy</button>
       </div>
+      <p class="hint">Install for Cursor only.</p>
+
+      <div class="copy-block">
+        <pre><code id="cmd-tool-multi">curl -fsSL https://ai.happynguyen.name.vn/install.sh | bash -s -- --tool=cursor,claude</code></pre>
+        <button class="btn-copy" type="button" data-copy-for="cmd-tool-multi" aria-label="Copy multi-tool install">Copy</button>
+      </div>
+      <p class="hint">Install for multiple tools at once.</p>
+
+      <div class="copy-block">
+        <pre><code id="cmd-only">bin/cowork install --tool=cursor --only=skills,rules</code></pre>
+        <button class="btn-copy" type="button" data-copy-for="cmd-only" aria-label="Copy category filter example">Copy</button>
+      </div>
+      <p class="hint">After clone: install only certain categories (<code>skills</code>, <code>rules</code>, <code>hooks</code>, <code>mcp</code>, <code>agents</code>).</p>
+
+      <aside class="callout callout-info">
+        <strong>List what's available.</strong>
+        Run <code>bin/cowork list tools</code> to see every adapter and whether
+        its target directory exists. <code>bin/cowork doctor</code> verifies
+        each tool's install state.
+      </aside>
+    </section>
+
+    <section id="verify" class="section">
+      <h2>Safer: inspect before running</h2>
+      <p class="section-lede">Never pipe a URL into your shell without knowing what it does.</p>
 
       <ol class="install-steps">
         <li>
           <div class="install-step-head">
             <span class="step-num">1</span>
-            <h3>Clone the repo</h3>
+            <h3>Download the bootstrap</h3>
+          </div>
+          <div class="copy-block">
+            <pre><code id="cmd-download">curl -fsSL https://ai.happynguyen.name.vn/install.sh -o happy-cowork-install.sh</code></pre>
+            <button class="btn-copy" type="button" data-copy-for="cmd-download" aria-label="Copy download command">Copy</button>
+          </div>
+        </li>
+        <li>
+          <div class="install-step-head">
+            <span class="step-num">2</span>
+            <h3>Read it</h3>
+          </div>
+          <div class="copy-block">
+            <pre><code id="cmd-read">less happy-cowork-install.sh</code></pre>
+            <button class="btn-copy" type="button" data-copy-for="cmd-read" aria-label="Copy read command">Copy</button>
+          </div>
+          <p class="hint">
+            It's a thin wrapper: clones
+            <a href="https://github.com/nguyenhappy92/happy-cowork" target="_blank" rel="noopener">nguyenhappy92/happy-cowork</a>
+            into <code>~/code/happy-cowork</code> and runs the repo's
+            <a href="https://github.com/nguyenhappy92/happy-cowork/blob/main/install.sh" target="_blank" rel="noopener"><code>install.sh</code></a>.
+            Nothing leaves your machine.
+          </p>
+        </li>
+        <li>
+          <div class="install-step-head">
+            <span class="step-num">3</span>
+            <h3>Run it</h3>
+          </div>
+          <div class="copy-block">
+            <pre><code id="cmd-run">bash happy-cowork-install.sh</code></pre>
+            <button class="btn-copy" type="button" data-copy-for="cmd-run" aria-label="Copy run command">Copy</button>
+          </div>
+        </li>
+      </ol>
+
+      <aside class="callout callout-info">
+        <strong>Never use <code>sudo</code>.</strong>
+        The installer only touches files you own: <code>~/code/happy-cowork</code> and
+        <code>~/.cursor/</code>. If a tutorial ever tells you to
+        <code>curl … | sudo bash</code>, walk away.
+      </aside>
+    </section>
+
+    <section id="manual" class="section">
+      <h2>Manual clone</h2>
+      <p class="section-lede">Same result, zero curl magic.</p>
+      <ol class="install-steps">
+        <li>
+          <div class="install-step-head">
+            <span class="step-num">1</span>
+            <h3>Clone</h3>
           </div>
           <div class="copy-block">
             <pre><code id="cmd-clone">git clone https://github.com/nguyenhappy92/happy-cowork.git ~/code/happy-cowork</code></pre>
             <button class="btn-copy" type="button" data-copy-for="cmd-clone" aria-label="Copy clone command">Copy</button>
           </div>
           <p class="hint">
-            Prefer SSH? Use
-            <code>git@github.com:nguyenhappy92/happy-cowork.git</code> instead.
-            You can also clone anywhere — <code>~/code/happy-cowork</code> is a
-            convention, not a requirement.
+            SSH variant:
+            <code>git@github.com:nguyenhappy92/happy-cowork.git</code>. Any path works; <code>~/code/happy-cowork</code> is just a convention.
           </p>
         </li>
-
         <li>
           <div class="install-step-head">
             <span class="step-num">2</span>
-            <h3>Run the installer</h3>
+            <h3>Symlink into ~/.cursor/</h3>
           </div>
           <div class="copy-block">
             <pre><code id="cmd-install">cd ~/code/happy-cowork &amp;&amp; ./install.sh</code></pre>
@@ -134,10 +248,9 @@
           </div>
           <p class="hint">
             Idempotent — safe to re-run. Existing files at the target paths are
-            backed up with a <code>.bak</code> suffix.
+            renamed with a <code>.bak</code> suffix before a symlink replaces them.
           </p>
         </li>
-
         <li>
           <div class="install-step-head">
             <span class="step-num">3</span>
@@ -182,11 +295,50 @@
       </div>
 
       <ul class="notes">
-        <li>Because everything is a symlink, editing a file in the repo is instantly picked up by Cursor — no reinstall.</li>
-        <li>Existing symlinks at the target are replaced. Existing regular files/dirs are moved to <code>&lt;path&gt;.bak</code> before linking.</li>
-        <li>Scripts under <code>hooks/scripts/</code> are chmod&#8209;ed executable by the installer.</li>
-        <li>You can override the Cursor home with <code>CURSOR_HOME=/custom/path ./install.sh</code>.</li>
+        <li>Everything is a symlink. Editing a file in the repo is instantly picked up by Cursor — no reinstall.</li>
+        <li>Existing symlinks at the target are replaced. Existing regular files are moved to <code>&lt;path&gt;.bak</code>.</li>
+        <li>Scripts under <code>hooks/scripts/</code> are made executable by the installer.</li>
+        <li>Override the Cursor home with <code>CURSOR_HOME=/custom/path</code>.</li>
       </ul>
+    </section>
+
+    <section id="options" class="section">
+      <h2>Install options</h2>
+      <p class="section-lede">Everything below is an environment variable you can prefix to the curl command.</p>
+
+      <div class="grid grid-3">
+        <article class="card">
+          <h3>HAPPY_COWORK_DIR</h3>
+          <p>Where to clone the repo. Default <code>$HOME/code/happy-cowork</code>.</p>
+        </article>
+        <article class="card">
+          <h3>HAPPY_COWORK_REF</h3>
+          <p>Branch, tag, or SHA to install. Default <code>main</code>. Pin to a tag for reproducibility.</p>
+        </article>
+        <article class="card">
+          <h3>HAPPY_COWORK_REPO</h3>
+          <p>Git URL. Default <code>https://github.com/nguyenhappy92/happy-cowork.git</code>. Useful for forks.</p>
+        </article>
+        <article class="card">
+          <h3>CURSOR_HOME</h3>
+          <p>Target Cursor config dir. Default <code>$HOME/.cursor</code>.</p>
+        </article>
+      </div>
+
+      <h3 class="subhead">Examples</h3>
+      <div class="copy-block">
+        <pre><code id="cmd-ex-pin">HAPPY_COWORK_REF=v1.0.0 \
+  bash -c "$(curl -fsSL https://ai.happynguyen.name.vn/install.sh)"</code></pre>
+        <button class="btn-copy" type="button" data-copy-for="cmd-ex-pin" aria-label="Copy pinned version example">Copy</button>
+      </div>
+      <p class="hint">Install a pinned version (once you cut a release).</p>
+
+      <div class="copy-block">
+        <pre><code id="cmd-ex-dir">HAPPY_COWORK_DIR=~/dev/happy-cowork \
+  bash -c "$(curl -fsSL https://ai.happynguyen.name.vn/install.sh)"</code></pre>
+        <button class="btn-copy" type="button" data-copy-for="cmd-ex-dir" aria-label="Copy custom dir example">Copy</button>
+      </div>
+      <p class="hint">Install into a custom directory.</p>
     </section>
 
     <section id="platforms" class="section">
@@ -194,11 +346,11 @@
       <div class="grid grid-3">
         <article class="card">
           <h3>macOS</h3>
-          <p>Works with the bundled <code>/bin/bash</code>. If you use Homebrew bash (<code>/opt/homebrew/bin/bash</code>), that's fine too.</p>
+          <p>Works with the default <code>/bin/bash</code> (3.2). Homebrew bash 5 works too.</p>
         </article>
         <article class="card">
           <h3>Linux</h3>
-          <p>Any distro with <code>bash</code> 4+ and <code>git</code>. Tested on Ubuntu LTS and Debian stable.</p>
+          <p>Any distro with <code>bash</code> and <code>git</code>. Tested on Ubuntu LTS and Debian stable.</p>
         </article>
         <article class="card">
           <h3>Windows (WSL 2)</h3>
@@ -209,22 +361,20 @@
 
     <section id="update" class="section">
       <h2>Updating</h2>
-      <p>Since everything is symlinked, updating is just a <code>git pull</code>:</p>
+      <p>Since everything is symlinked, updating is a single <code>git pull</code>:</p>
       <div class="copy-block">
         <pre><code id="cmd-update">cd ~/code/happy-cowork &amp;&amp; git pull --rebase</code></pre>
         <button class="btn-copy" type="button" data-copy-for="cmd-update" aria-label="Copy update command">Copy</button>
       </div>
       <p class="hint">
-        New skills or rules appear automatically because <code>~/.cursor/skills/</code>
-        and <code>~/.cursor/rules/</code> point at the repo's folders.
-        Restart Cursor if you added or changed <code>hooks/hooks.json</code>.
+        Or re-run the one-liner — it's idempotent and will fast-forward to <code>main</code>.
       </p>
     </section>
 
     <section id="uninstall" class="section">
       <h2>Uninstall</h2>
       <p>
-        Remove the symlinks the installer created. Nothing else is touched —
+        Remove the symlinks. Nothing else is touched —
         any <code>.bak</code> files stay where they are.
       </p>
       <div class="copy-block">
@@ -239,22 +389,25 @@ find ~/.cursor/skills ~/.cursor/rules ~/.cursor/hooks -maxdepth 2 -type l \
       <h2>Troubleshooting</h2>
       <dl class="faq">
         <dt>Cursor doesn't see the skills.</dt>
-        <dd>Restart Cursor fully (quit, not just close the window). Confirm the symlinks exist: <code>ls -la ~/.cursor/skills</code>.</dd>
+        <dd>Fully quit Cursor (not just close the window) and relaunch. Confirm the symlinks: <code>ls -la ~/.cursor/skills</code>.</dd>
 
         <dt><code>~/.cursor/</code> doesn't exist.</dt>
-        <dd>Launch Cursor once to create it, then re-run <code>./install.sh</code>.</dd>
+        <dd>Launch Cursor once so it creates the directory, then re-run the installer.</dd>
 
         <dt>The installer says "<em>Backing up existing … -&gt; ….bak</em>".</dt>
         <dd>Expected. You had a regular file or directory at the target path; it's safe on disk next to the new symlink.</dd>
 
         <dt>Permission denied on <code>install.sh</code>.</dt>
-        <dd>Run <code>chmod +x install.sh</code> once, then re-try.</dd>
+        <dd>The bootstrap sets <code>chmod +x</code> automatically. If you cloned manually: <code>chmod +x install.sh</code>.</dd>
 
         <dt>I use zsh / fish — does that matter?</dt>
-        <dd>No. The script runs under <code>bash</code> regardless of your interactive shell.</dd>
+        <dd>No. The scripts run under <code>bash</code> regardless of your interactive shell.</dd>
 
         <dt>Can I install into a custom Cursor home?</dt>
-        <dd>Yes: <code>CURSOR_HOME=/some/path ./install.sh</code>.</dd>
+        <dd>Yes: <code>CURSOR_HOME=/some/path bash -c "$(curl -fsSL https://ai.happynguyen.name.vn/install.sh)"</code>.</dd>
+
+        <dt>The curl fails with <em>certificate problem</em>.</dt>
+        <dd>Your system clock is probably off, or a corporate proxy is intercepting TLS. Fix the clock, or use the manual clone path.</dd>
       </dl>
     </section>
 
@@ -293,7 +446,9 @@ find ~/.cursor/skills ~/.cursor/rules ~/.cursor/hooks -maxdepth 2 -type l \
         <p class="muted">
           <a href="https://github.com/nguyenhappy92/happy-cowork" target="_blank" rel="noopener">GitHub repo</a>
           ·
-          <a href="https://github.com/nguyenhappy92/happy-cowork/blob/main/install.sh" target="_blank" rel="noopener">install.sh</a>
+          <a href="../install.sh">install.sh</a>
+          ·
+          <a href="https://github.com/nguyenhappy92/happy-cowork/blob/main/install.sh" target="_blank" rel="noopener">in-repo install.sh</a>
         </p>
       </div>
     </div>
@@ -337,6 +492,30 @@ find ~/.cursor/skills ~/.cursor/rules ~/.cursor/hooks -maxdepth 2 -type l \
         ta.select();
         try { document.execCommand("copy"); done(); } catch (e) {}
         document.body.removeChild(ta);
+      }
+    })();
+
+    (function () {
+      var root = document.documentElement;
+      var btns = document.querySelectorAll("[data-theme-toggle]");
+      function apply(t) {
+        root.setAttribute("data-theme", t);
+        try { localStorage.setItem("cowork-theme", t); } catch (e) {}
+        btns.forEach(function (b) { b.setAttribute("aria-pressed", t === "light" ? "true" : "false"); });
+      }
+      apply(root.getAttribute("data-theme") || "dark");
+      btns.forEach(function (b) {
+        b.addEventListener("click", function () {
+          apply(root.getAttribute("data-theme") === "light" ? "dark" : "light");
+        });
+      });
+      var mq = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)");
+      if (mq && mq.addEventListener) {
+        mq.addEventListener("change", function (e) {
+          try {
+            if (!localStorage.getItem("cowork-theme")) apply(e.matches ? "light" : "dark");
+          } catch (err) {}
+        });
       }
     })();
   </script>
