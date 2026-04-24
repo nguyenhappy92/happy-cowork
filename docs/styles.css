@@ -173,38 +173,6 @@ pre code { background: transparent; padding: 0; }
   padding: 0 1.5rem;
   text-align: center;
 }
-
-.hero-illustration {
-  margin: 0 auto 1.5rem;
-  width: min(480px, 80%);
-  position: relative;
-}
-.hero-illustration::before {
-  content: "";
-  position: absolute;
-  inset: -8% -4% -4% -4%;
-  border-radius: 28px;
-  background:
-    radial-gradient(closest-side, var(--bg-glow), transparent 75%);
-  z-index: -1;
-  filter: blur(4px);
-}
-.hero-illustration img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 20px;
-  box-shadow: var(--shadow);
-  background: #ffffff;
-  mix-blend-mode: normal;
-}
-:root[data-theme="dark"] .hero-illustration img {
-  border: 1px solid var(--border);
-}
-
-@media (max-width: 640px) {
-  .hero-illustration { width: min(360px, 90%); margin-bottom: 1rem; }
-}
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.14em;
