@@ -110,8 +110,9 @@ Agent personas (`core/agents/`):
 
 ## Current status
 
-- Cursor adapter: fully implemented.
-- Claude Code adapter (`adapters/claude/adapter.sh`): stub — `install`/`uninstall` are not yet implemented. The planned work is to symlink `core/skills` → `~/.claude/skills`, render `core/rules/*` into `~/.claude/CLAUDE.md`, and render `core/agents/*` into `~/.claude/agents/`.
+- Cursor adapter: fully implemented (skills, rules, hooks, MCP template).
+- Claude Code adapter (`adapters/claude/adapter.sh`): implemented — symlinks `core/skills` → `~/.claude/skills`, `core/rules/*` → `~/.claude/rules/*` plus a generated `~/.claude/CLAUDE.cowork.md` of `@`-includes, and `core/agents/*` → `~/.claude/agents/*`. Drops `~/.claude/mcp.template.json` for hand-merging.
+- GitHub Copilot adapter (`adapters/copilot/adapter.sh`): implemented — symlinks skills to `~/.copilot/skills/`, renders `core/rules/*` into `~/.copilot/instructions/*.instructions.md` (with `applyTo: '**'`), symlinks agents to `~/.copilot/agents/`, drops `~/.copilot/mcp.template.json`. Override path with `COPILOT_HOME`.
 
 ## Prerequisites
 
