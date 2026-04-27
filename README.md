@@ -2,7 +2,7 @@
 
 A tool-neutral hub of AI coding **skills**, **rules**, **hooks**, and **MCP configs**, installed into every AI tool on my machine from a single source of truth.
 
-Today it ships with a **Cursor** adapter; a **Claude Code** adapter is scaffolded and next on the runway. Aider, Continue, and Codex are planned.
+Today it ships with adapters for **Cursor**, **Claude Code**, and **GitHub Copilot**. Aider, Continue, and Codex are planned.
 
 Live site: <https://ai.happynguyen.name.vn/>
 
@@ -85,10 +85,13 @@ tools: [cursor, claude]   # optional; default: every tool
 | Tool | Adapter | Status |
 |---|---|---|
 | Cursor | `adapters/cursor/` | shipping |
-| Claude Code | `adapters/claude/` | scaffold (install NYI) |
+| Claude Code | `adapters/claude/` | shipping |
+| GitHub Copilot | `adapters/copilot/` | shipping |
 | Aider | — | planned |
 | Continue.dev | — | planned |
 | Codex | — | planned |
+
+Env overrides: `CURSOR_HOME` (default `~/.cursor`), `CLAUDE_HOME` (default `~/.claude`), `COPILOT_HOME` (default `~/.copilot`).
 
 Adding a new tool: create `adapters/<name>/adapter.sh` implementing `adapter_<name>::{name,target,detect,install,uninstall,doctor}`. The CLI discovers it automatically.
 
@@ -102,6 +105,17 @@ Adding a new tool: create `adapters/<name>/adapter.sh` implementing `adapter_<na
 | `daily-standup` | Summarizing yesterday's commits for standup. |
 | `triage-issues` | Triaging open GitHub / Linear issues by priority. |
 | `release-notes` | Drafting release notes from a git range. |
+| `review-terraform-plan` | Reviewing a Terraform plan for blast radius and destructive changes. |
+| `cost-impact-summary` | Estimating AWS/Azure/GCP cost impact of an infra change. |
+| `deploy-checklist` | Running a pre-deploy go/no-go checklist. |
+| `triage-incident` | Structuring an incident triage (severity, blast radius, mitigation). |
+| `draft-runbook` | Producing an ops runbook for a service or alert. |
+| `k8s-health-check` | Structured Kubernetes cluster / workload health check. |
+| `helm-diff-review` | Reviewing a `helm diff upgrade` or ArgoCD diff before applying. |
+| `aws-iam-policy-review` | Auditing an AWS IAM policy / role / trust doc for least privilege. |
+| `azure-rbac-review` | Auditing Azure RBAC role assignments and custom roles. |
+| `gcp-iam-review` | Auditing GCP IAM bindings, custom roles, and SA impersonation chains. |
+| `cloud-network-review` | Reviewing AWS VPC / Azure VNet / GCP VPC network design. |
 
 ## Design principles
 
@@ -120,7 +134,8 @@ Adding a new tool: create `adapters/<name>/adapter.sh` implementing `adapter_<na
 - [x] One-line curl-pipe installer (`docs/install.sh` → <https://ai.happynguyen.name.vn/install.sh>).
 - [x] Install walkthrough page (`docs/install/index.html` → <https://ai.happynguyen.name.vn/install/>).
 - [x] Multi-tool refactor: `core/` + `adapters/` + `bin/cowork`.
-- [ ] Complete Claude Code adapter (render `CLAUDE.md`, install skills, install hooks).
+- [x] Claude Code adapter (skills, rules via `CLAUDE.cowork.md`, agents, MCP template).
+- [x] GitHub Copilot adapter (skills, rendered `*.instructions.md`, agents, MCP template).
 - [ ] Aider and Continue adapters.
 - [ ] CI lint for `SKILL.md` frontmatter + adapter smoke tests (bats).
 - [ ] `cowork add skill <name>` scaffolder.
