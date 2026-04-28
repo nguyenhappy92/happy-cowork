@@ -15,6 +15,10 @@
 | Cost question | **DevOps agent** with `cost-impact-summary` |
 | Terraform plan pasted in chat | **DevOps agent** with `review-terraform-plan` |
 | Helm / ArgoCD diff pasted | **DevOps agent** with `helm-diff-review`, then **SRE** for blast radius |
+| Feature spans UI + API + DB; "build / design / refactor a feature"; new endpoint; new screen | **Fullstack agent** |
+| Stack trace / error log / "why is this failing?" | **Fullstack agent** with `debug-stack-trace` |
+| Slow page / slow endpoint / Web Vitals question | **Fullstack agent** with `perf-profile-web` |
+| "Scan / pentest / audit our service / repo / image / cloud account"; pre-release security review; threat-model a design | **Pentest agent** |
 | Standup / triage / release notes | run the matching skill directly, no specialist needed |
 
 **Behavior:**
